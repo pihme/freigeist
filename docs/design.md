@@ -82,7 +82,7 @@ Continuous **wavy engraving lines** run down the whole page. They are a pre-rend
 Posts with `ai_generated: true` show the **Helferlein** (`assets/helferlein.svg`), the mascot of github.com/pihme/helferlein, redrawn from its line-drawing logo in Freigeist style: ink in `currentColor`, accent-coloured eyes and smile, hatched shading on the right side instead of a solid shadow, and strokes thick enough to read at 22–40 px, and the flame and eye pixels in `--accent`. Its colours are `currentColor`, `--accent` and `--paper`, so it also works on dark backgrounds.
 
 - On post pages it is 40 px, at the start of the tag line under the title, with an "AI-GENERATED" label. On index cards it is 22 px, after the meta line.
-- It shows the tooltip "This post was created by AI." (plus ` (ai_author)` if set) on hover and keyboard focus. The tooltip is pure CSS (`data-tip`), with `title` as a fallback, and the element has `role="img"` and an `aria-label` with the same text.
+- It shows the tooltip "This post was created by AI." on hover and keyboard focus. The tooltip is pure CSS (`data-tip`), with `title` as a fallback, and the element has `role="img"` and an `aria-label` with the same text.
 - Don't use it below 22 px.
 
 ## Motion

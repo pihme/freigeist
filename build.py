@@ -6,6 +6,7 @@
     python3 build.py --out DIR       # other output directory
     python3 build.py --serve         # build, then serve on http://localhost:8000
 """
+import xml.etree.ElementTree as ET
 import argparse, datetime, html, os, re, shutil, sys, textwrap
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -112,12 +113,27 @@ def cards(a, b, root, mobile):
     return s
 
 # ---------- pages ----------
+KEEP = ("g-hstab", "g-cross", "g-title")
+
+def header_only(svg):
+    """Post pages: keep only what the compact header clones (defs, accent stab, cross, title).
+    No hero cards, beams or tagline end up in the HTML."""
+    ET.register_namespace("", "http://www.w3.org/2000/svg")
+    r = ET.fromstring(svg)
+    for c in list(r):
+        tag = c.tag.split("}")[-1]
+        if tag != "defs" and not any(k in (c.get("class") or "").split() for k in KEEP):
+            r.remove(c)
+    return ET.tostring(r, encoding="unicode")
+
 def page(title, main, root, a=None, b=None, compact=False, yy=None):
     yy = yy or datetime.date.today().strftime("%y")
     base = open(os.path.join(TH, "base.html"), encoding="utf-8").read()
     hd = open(os.path.join(TH, "hero-desktop.svg"), encoding="utf-8").read().replace("{{CARDS}}", cards(a, b, root, False))
     hm = open(os.path.join(TH, "hero-mobile.svg"), encoding="utf-8").read().replace("{{CARDS}}", cards(a, b, root, True))
-    if not b:  # hide empty second card background
+    if compact:
+        hd, hm = header_only(hd), header_only(hm)
+    elif not b:  # hide empty second card background
         hd = hd.replace('<rect class="c2"', '<rect class="c2" display="none"')
         hm = hm.replace('<rect x="12" y="712"', '<rect display="none" x="12" y="712"')
     return (base.replace("{{HERO_D}}", hd).replace("{{HERO_M}}", hm).replace("{{MAIN}}", main)
@@ -129,7 +145,7 @@ HELPER = re.sub(r"<title>.*?</title>", "", HELPER).replace(' role="img" aria-lab
 
 def helper(p, size):
     if not p.get("ai_generated"): return ""
-    tip = "This post was created by AI." + (f" ({p['ai_author']})" if p.get("ai_author") else "")
+    tip = "This post was created by AI."
     svg = HELPER.replace("<svg ", f'<svg height="{size}" width="{round(size*116/142)}" ', 1)
     return f'<span class="ai-helper" tabindex="0" role="img" aria-label="{E(tip)}" title="{E(tip)}" data-tip="{E(tip)}">{svg}</span>'
 
