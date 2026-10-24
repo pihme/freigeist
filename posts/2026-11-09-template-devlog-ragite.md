@@ -6,6 +6,8 @@ project: ragite
 tags: [template, devlog, ragite]
 summary: "TEMPLATE POST – replace before publishing. A devlog entry: what changed since last time, what broke, what is next."
 draft: true
+ai_generated: true      # shows the helper bot + tooltip
+ai_author: Example Bot  # optional, appended to the tooltip
 ---
 
 > **Template post.** Placeholder devlog structure. No facts below are real.

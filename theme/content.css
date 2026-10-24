@@ -15,3 +15,17 @@ main.post .prose pre code{background:none;color:inherit;font-size:14px;padding:0
 main.post .prose img{max-width:100%}
 main.post .back{font:600 12px "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
 @media(max-width:700px){main.post .prose{padding:20px 18px;margin:0 -18px}main.post .prose h1{font-size:38px}main.post .prose p,main.post .prose li{font-size:18px}}
+/* helper bot: marks AI-generated posts; tooltip on hover/focus */
+.ai-helper{position:relative;display:inline-block;vertical-align:middle;color:#2b2724;--paper:#f8f3ea;margin-left:8px;cursor:help;outline-offset:3px}
+.ai-helper svg{display:block}
+main.post .tags .ai-helper{margin:0 8px 0 -4px;vertical-align:-14px}
+.ai-label{font-weight:700;color:#111}
+.ai-helper::after{content:attr(data-tip);position:absolute;left:-6px;bottom:calc(100% + 10px);white-space:nowrap;font:600 12px "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:none;background:#111;color:var(--acc-text);padding:6px 10px;border-left:3px solid var(--accent);opacity:0;pointer-events:none;transition:opacity .12s;z-index:10}
+.ai-helper::before{content:"";position:absolute;left:6px;bottom:calc(100% + 4px);border:6px solid transparent;border-bottom:0;border-top-color:#111;opacity:0;transition:opacity .12s;z-index:10}
+.ai-helper:hover::after,.ai-helper:focus-visible::after,.ai-helper:hover::before,.ai-helper:focus-visible::before,.ai-helper.tip::after,.ai-helper.tip::before{opacity:1}
+@media(max-width:700px){.ai-helper::after{white-space:normal;width:max-content;max-width:62vw}}
+@media(prefers-reduced-motion:reduce){.ai-helper::after,.ai-helper::before{transition:none}}
+
+/* index cards: helper sits at the right end of the meta line, so open the tooltip leftwards */
+article .ai-helper::after{left:auto;right:-6px}
+article .ai-helper::before{left:auto;right:6px}

@@ -22,6 +22,7 @@ def parse(path):
         for line in m.group(1).splitlines():
             if ":" not in line or line.strip().startswith("#"): continue
             k, v = line.split(":", 1); v = v.strip()
+            if not v[:1] in "\"'": v = re.sub(r"\s+#.*$", "", v)
             if v.startswith("[") and v.endswith("]"):
                 v = [x.strip().strip("\"'") for x in v[1:-1].split(",") if x.strip()]
             elif v.lower() in ("true", "false"): v = v.lower() == "true"
@@ -111,7 +112,8 @@ def cards(a, b, root, mobile):
     return s
 
 # ---------- pages ----------
-def page(title, main, root, a=None, b=None):
+def page(title, main, root, a=None, b=None, compact=False, yy=None):
+    yy = yy or datetime.date.today().strftime("%y")
     base = open(os.path.join(TH, "base.html"), encoding="utf-8").read()
     hd = open(os.path.join(TH, "hero-desktop.svg"), encoding="utf-8").read().replace("{{CARDS}}", cards(a, b, root, False))
     hm = open(os.path.join(TH, "hero-mobile.svg"), encoding="utf-8").read().replace("{{CARDS}}", cards(a, b, root, True))
@@ -119,16 +121,26 @@ def page(title, main, root, a=None, b=None):
         hd = hd.replace('<rect class="c2"', '<rect class="c2" display="none"')
         hm = hm.replace('<rect x="12" y="712"', '<rect display="none" x="12" y="712"')
     return (base.replace("{{HERO_D}}", hd).replace("{{HERO_M}}", hm).replace("{{MAIN}}", main)
-                .replace("{{TITLE}}", E(title)).replace("{{ROOT}}", root))
+                .replace("{{YY}}", yy).replace("{{TITLE}}", E(title)).replace("{{ROOT}}", root)
+                .replace("<body>", '<body class="compact">' if compact else "<body>", 1))
+
+HELPER = open(os.path.join(ROOT, "assets", "helferlein.svg"), encoding="utf-8").read()
+HELPER = re.sub(r"<title>.*?</title>", "", HELPER).replace(' role="img" aria-label="Helferlein"', ' aria-hidden="true" focusable="false"')
+
+def helper(p, size):
+    if not p.get("ai_generated"): return ""
+    tip = "This post was created by AI." + (f" ({p['ai_author']})" if p.get("ai_author") else "")
+    svg = HELPER.replace("<svg ", f'<svg height="{size}" width="{round(size*116/142)}" ', 1)
+    return f'<span class="ai-helper" tabindex="0" role="img" aria-label="{E(tip)}" title="{E(tip)}" data-tip="{E(tip)}">{svg}</span>'
 
 MK = '<svg class="mk" viewBox="0 0 88 88"><use href="#fg-mark"/></svg>'
-FOOT = f'<footer>{MK}FREIGEIST · FG-06 · NOTES FROM OPEN-SOURCE WORK</footer>'
+FOOT = f'<footer>{MK}FREIGEIST · FG-{{{{YY}}}} · STEERING AI IN UNCHARTED WATERS</footer>'
 
 def teaser(p, root):
     tags = " · ".join("#" + t for t in p.get("tags", []))
     proj = f'PROJECT: {E(p["project"]).upper()} · ' if p.get("project") else ""
     dr = '<span class="draft">DRAFT</span>' if p.get("draft") else ""
-    return (f'<article><div class="meta">{E(meta_line(p))}{dr}</div><i class="st"></i>'
+    return (f'<article><div class="meta">{E(meta_line(p))}{dr}{helper(p, 22)}</div><i class="st"></i>'
             f'<h2><a href="{root}posts/{p["slug"]}.html">{E(p["title"])}</a></h2><p>{E(p.get("summary",""))}</p>'
             f'<div class="tags">{proj}{E(tags)}</div><a href="{root}posts/{p["slug"]}.html" class="more">Read more</a></article>')
 
@@ -170,8 +182,8 @@ def build(out, drafts):
         tags = " · ".join("#" + t for t in p.get("tags", []))
         proj = f'PROJECT: {E(p["project"]).upper()} · ' if p.get("project") else ""
         main = (f'<main class="posts post"><div class="kick"><a class="back" href="../index.html">← All posts</a><span>{E(meta_line(p))}{dr}</span></div>'
-                f'<div class="prose"><h1>{E(p["title"])}</h1><div class="tags">{proj}{E(tags)}</div>{markdown(p["body"])}</div>{FOOT}</main>')
-        W(f'posts/{p["slug"]}.html', page(f'{p["title"]} – Freigeist', main, "../", p, nxt))
+                f'<div class="prose"><h1>{E(p["title"])}</h1><div class="tags">{helper(p, 40)}{'<span class="ai-label">AI-GENERATED · </span>' if p.get("ai_generated") else ""}{proj}{E(tags)}</div>{markdown(p["body"])}</div>{FOOT}</main>')
+        W(f'posts/{p["slug"]}.html', page(f'{p["title"]} – Freigeist', main, "../", p, nxt, compact=True, yy=str(p.get("date", ""))[2:4] or None))
     print(f"built {len(posts)} posts into {out}")
 
 if __name__ == "__main__":

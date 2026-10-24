@@ -19,7 +19,7 @@ def card_tokens(s, mobile):
     return s
 
 TR = [("BLÜTE 06 // HALB STICH", "BLOSSOM 06 // HALF ETCH"), ("HALB PIXEL · 1-BIT", "HALF PIXEL · 1-BIT"),
-      ("SIGNAL: ZART", "SIGNAL: SOFT"), ("STICH→PIXEL", "ETCH→PIXEL"), ("EIN BLOG ÜBER DAS FREIE DENKEN", "NOTES FROM OPEN-SOURCE WORK"),
+      ("SIGNAL: ZART", "SIGNAL: SOFT"), ("FREIGEIST · 52.52N", "FREIGEIST · 22.91S"), ("STICH→PIXEL", "ETCH→PIXEL"), ("EIN BLOG ÜBER DAS FREIE DENKEN", "STEERING AI IN UNCHARTED WATERS"),
       (">Texte<", '><a href="{{ROOT}}index.html">Posts</a><'), (">Notizen<", '><a href="{{ROOT}}notes.html">Notes</a><'),
       (">Wege<", '><a href="{{ROOT}}projects.html">Projects</a><'), (">Über<", '><a href="{{ROOT}}about.html">About</a><'),
       ("Texte   Notizen   Wege   Über", "Posts   Notes   Projects   About")]
@@ -30,6 +30,8 @@ for a, b in TR: d = d.replace(a, b); m = m.replace(a, b)
 # English nav labels are longer: respace them
 for o, n in [('x="1040" y="70"', 'x="1010" y="70"'), ('x="1136.0" y="70"', 'x="1088" y="70"'), ('x="1256.8" y="70"', 'x="1170" y="70"'), ('x="1340.3999999999999" y="70"', 'x="1280" y="70"')]:
     d = d.replace(o, n)
+# plate number = two-digit year, filled by build.py
+d = d.replace("FG-06", "FG-{{YY}}").replace("FG/06", "FG/{{YY}}"); m = m.replace("FG-06", "FG-{{YY}}").replace("FG/06", "FG/{{YY}}")
 d = card_tokens(d, False); m = card_tokens(m, True)
 open(os.path.join(T, "hero-desktop.svg"), "w").write(d)
 open(os.path.join(T, "hero-mobile.svg"), "w").write(m)
@@ -42,6 +44,12 @@ h = re.sub(r"<title>.*?</title>", "<title>{{TITLE}}</title><link rel=\"styleshee
 a = h.index('<main class="posts">'); b = h.index('</main>') + 7
 h = h[:a] + "{{MAIN}}" + h[b:]
 h = re.sub(r'<nav class="demo">.*?</nav>', "", h)
+# placeholder HUD coordinates: Rio de Janeiro
+h = h.replace("52.52N 13.40E", "22.91S 43.17W").replace("FG-06", "FG-{{YY}}")
+# compact mode (post pages): hero hidden, header permanently compact; title + mark link home
+h = h.replace("let p=Math.min(1,Math.max(0,y/st.dist));", "let p=Math.min(1,Math.max(0,y/st.dist));if(document.body.classList.contains('compact'))p=1;")
+h = h.replace("bar.style.opacity=e;", "bar.style.opacity=e;{const hh=document.getElementById('hhome');if(hh){hh.style.left=(tx+st.tb.x*k)+'px';hh.style.top=(ty+st.tb.y*k)+'px';hh.style.width=((st.tb.r-st.tb.x)*k+(st.mob?54:66))+'px';hh.style.height=Math.max(30,(st.tb.b-st.tb.y)*k)+'px';hh.style.pointerEvents=e>.6?'auto':'none'}}", 1)
+h = h.replace('<div id="hbar">', '<a id="hhome" href="{{ROOT}}index.html" aria-label="Freigeist – home"></a><style>#hhome{position:fixed;z-index:6;pointer-events:none}body.compact>svg.d,body.compact>svg.m{position:absolute;top:0;left:0;visibility:hidden;pointer-events:none}body.compact main.posts{position:relative;z-index:1;margin-top:0;padding-top:130px}@media(max-width:700px){body.compact main.posts{padding-top:110px}}</style><div id="hbar">', 1)
 for a_, b_ in [('aria-label="Menü"', 'aria-label="Menu"'), ('<a href="#">Texte</a>', '<a href="{{ROOT}}index.html">Posts</a>'),
                ('<a href="#">Notizen</a>', '<a href="{{ROOT}}notes.html">Notes</a>'), ('<a href="#">Wege</a>', '<a href="{{ROOT}}projects.html">Projects</a>'),
                ('<a href="#">Über</a>', '<a href="{{ROOT}}about.html">About</a>')]:

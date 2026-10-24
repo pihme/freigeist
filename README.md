@@ -2,7 +2,7 @@
 
 A blog bringing together my open-source projects: notes, devlogs and making-ofs.
 
-Design notes: [docs/design.md](docs/design.md)
+Design notes: [docs/design.md](docs/design.md) · Open items: [TODO.md](TODO.md)
 
 ## Layout
 
@@ -29,6 +29,8 @@ site/         build output (git-ignored)
    tags: [launch, hermetarium]
    summary: "One or two sentences shown on the cards and in the list."
    draft: true          # drafts are skipped unless you build with --drafts
+   ai_generated: true   # optional: marks the post as AI-generated (helper bot + tooltip)
+   ai_author: Some Bot  # optional: name shown in the tooltip
    ---
    ```
 
