@@ -150,7 +150,7 @@ def helper(p, size):
     return f'<span class="ai-helper" tabindex="0" role="img" aria-label="{E(tip)}" title="{E(tip)}" data-tip="{E(tip)}">{svg}</span>'
 
 MK = '<svg class="mk" viewBox="0 0 88 88"><use href="#fg-mark"/></svg>'
-FOOT = f'<footer>{MK}FREIGEIST · FG-{{{{YY}}}} · STEERING AI IN UNCHARTED WATERS</footer>'
+FOOT = f'<footer>{MK}FREIGEIST · FG-{{{{YY}}}} · STEERING AI IN UNCHARTED WATERS · <a href="https://creativecommons.org/licenses/by-nd/4.0/" rel="license">CC BY-ND 4.0</a></footer>'
 
 def teaser(p, root):
     tags = " · ".join("#" + t for t in p.get("tags", []))
