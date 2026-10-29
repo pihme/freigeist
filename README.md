@@ -50,6 +50,6 @@ python3 build.py                    # build published posts only into ./site
 
 ## Licences
 
-The written content (the files in `posts/` and `pages/` and the images published with them) is licensed under [Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)](https://creativecommons.org/licenses/by-nd/4.0/); see `LICENSE`. The site code (`build.py`, `theme/` without the fonts) has no separate licence yet.
+Everything in this repository is licensed under [Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)](https://creativecommons.org/licenses/by-nd/4.0/); see `LICENSE`. That covers the written content (`posts/`, `pages/` and the images published with them) and the site generator (`build.py`, `theme/`).
 
 The fonts in `theme/fonts/` (Cormorant Garamond, IBM Plex Mono and Unbounded) are under the SIL Open Font License 1.1.
