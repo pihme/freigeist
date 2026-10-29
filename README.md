@@ -2,7 +2,7 @@
 
 A blog bringing together my open-source projects: notes, devlogs and making-ofs.
 
-Design notes: [docs/design.md](docs/design.md) · Open items: [TODO.md](TODO.md)
+Design notes: [docs/design.md](docs/design.md)  
 
 ## Layout
 
