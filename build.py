@@ -136,6 +136,9 @@ def page(title, main, root, a=None, b=None, compact=False, yy=None):
     elif not b:  # hide empty second card background
         hd = hd.replace('<rect class="c2"', '<rect class="c2" display="none"')
         hm = hm.replace('<rect x="12" y="712"', '<rect display="none" x="12" y="712"')
+    if not os.path.exists(os.path.join(ROOT, "pages", "about.md")):  # no About page: drop its nav links
+        base = re.sub(r'<a href="\{\{ROOT\}\}about\.html">About</a>', "", base)
+        hd = re.sub(r'<text[^>]*><a href="\{\{ROOT\}\}about\.html">About</a></text>', "", hd)
     return (base.replace("{{HERO_D}}", hd).replace("{{HERO_M}}", hm).replace("{{MAIN}}", main)
                 .replace("{{YY}}", yy).replace("{{TITLE}}", E(title)).replace("{{ROOT}}", root)
                 .replace("<body>", '<body class="compact">' if compact else "<body>", 1))
