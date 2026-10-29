@@ -139,6 +139,10 @@ def page(title, main, root, a=None, b=None, compact=False, yy=None):
     if not os.path.exists(os.path.join(ROOT, "pages", "about.md")):  # no About page: drop its nav links
         base = re.sub(r'<a href="\{\{ROOT\}\}about\.html">About</a>', "", base)
         hd = re.sub(r'<text[^>]*><a href="\{\{ROOT\}\}about\.html">About</a></text>', "", hd)
+    if not any(re.search(r"^type:\s*note\s*$", open(os.path.join(ROOT, "posts", f), encoding="utf-8").read(), re.M)
+               for f in os.listdir(os.path.join(ROOT, "posts")) if f.endswith(".md")):  # no notes: drop the Notes nav links
+        base = base.replace('<a href="{{ROOT}}notes.html">Notes</a>', "")
+        hd = re.sub(r'<text[^>]*><a href="\{\{ROOT\}\}notes\.html">Notes</a></text>', "", hd)
     return (base.replace("{{HERO_D}}", hd).replace("{{HERO_M}}", hm).replace("{{MAIN}}", main)
                 .replace("{{YY}}", yy).replace("{{TITLE}}", E(title)).replace("{{ROOT}}", root)
                 .replace("<body>", '<body class="compact">' if compact else "<body>", 1))
@@ -186,7 +190,7 @@ def build(out, drafts):
     a, b = (posts + [None, None])[:2]
     W("index.html", page("Freigeist", listing("ALL POSTS // ARCHIVE", posts, ""), "", a, b))
     notes = [p for p in posts if p.get("type") == "note"]
-    W("notes.html", page("Notes – Freigeist", listing("NOTES // SHORT FORM", notes, ""), "", *(notes + [None, None])[:2]))
+    if notes: W("notes.html", page("Notes – Freigeist", listing("NOTES // SHORT FORM", notes, ""), "", *(notes + [None, None])[:2]))
     projects = {}
     for p in posts: projects.setdefault(p.get("project") or "misc", []).append(p)
     pm = "".join(f'<div class="kick"><span>{MK}PROJECT // {E(k).upper()}</span><span>{len(v):02d}</span></div><div class="grid" style="margin-bottom:80px">{"".join(teaser(p, "") for p in v)}</div>' for k, v in sorted(projects.items()))
