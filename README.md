@@ -48,6 +48,10 @@ python3 build.py                    # build published posts only into ./site
 
 `site/index.html` also opens directly from disk. The accent pair is random on each load; force one with `?accent=cobalt` (or acid-green, signal-orange, hot-magenta, warning-red, safety-yellow).
 
+## Publish
+
+The site is served from the `gh-pages` branch at https://pihme.github.io/freigeist/. `tools/deploy.sh` builds `site/` content from `main` and replaces `gh-pages` with it (the branch holds only generated files, so replacing it is intended).
+
 ## Licences
 
 Everything in this repository is licensed under [Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)](https://creativecommons.org/licenses/by-nd/4.0/); see `LICENSE`. That covers the written content (`posts/`, `pages/` and the images published with them) and the site generator (`build.py`, `theme/`).
