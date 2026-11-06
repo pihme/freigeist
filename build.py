@@ -90,26 +90,51 @@ def tspans(text, x, width, dy, max_lines):
     if len(textwrap.wrap(text, width)) > max_lines: lines[-1] = lines[-1].rstrip(".,;: ") + "…"
     return "".join(f'<tspan x="{x}"{"" if k == 0 else f" dy={chr(34)}{dy}{chr(34)}"}>{E(s)}</tspan>' for k, s in enumerate(lines))
 
+def approx_meta_w(text, size, tracking):
+    """Rough advance width for hero meta lines (Cormorant + letter-spacing)."""
+    return len(text) * (size * 0.53 + tracking)
+
+def hero_helper(p, x, y, size, tracking, prefix, text=None, font_size=None):
+    """Helferlein after a hero teaser meta/title line; foreignObject so the CSS tooltip works."""
+    if not p or not p.get("ai_generated"): return ""
+    tip = "This post was created by AI."
+    w = round(size * 116 / 142)
+    svg = HELPER.replace('id="hfh"', f'id="{prefix}-hfh"').replace('url(#hfh)', f'url(#{prefix}-hfh)')
+    svg = svg.replace("<svg ", f'<svg height="{size}" width="{w}" ', 1)
+    label = text if text is not None else meta_line(p)
+    fs = font_size if font_size is not None else size
+    hx = x + approx_meta_w(label, fs, tracking) + 12
+    hy = y - size + 4
+    inner = (f'<span class="ai-helper" tabindex="0" role="img" aria-label="{E(tip)}" title="{E(tip)}" '
+             f'data-tip="{E(tip)}">{svg}</span>')
+    return (f'<foreignObject x="{hx:.1f}" y="{hy}" width="{w + 6}" height="{size + 6}" overflow="visible">'
+            f'<div xmlns="http://www.w3.org/1999/xhtml" class="hero-ai">{inner}</div></foreignObject>')
+
 def cards(a, b, root, mobile):
     G, L = 'font-family="Cormorant Garamond"', lambda p: f'{root}posts/{p["slug"]}.html'
     s = ""
     if not mobile:
         if a:
             s += (f'<text x="96" y="455" {G} font-size="15" fill="#8a8079" letter-spacing="2">{E(meta_line(a))}</text>'
+                  f'{hero_helper(a, 96, 455, 22, 2, "hha", font_size=15)}'
                   f'<a href="{L(a)}"><text x="96" y="510" {G} font-style="italic" font-size="46" fill="#2b2724">{tspans(a["title"],96,34,0,1)}</text></a>'
                   f'<text x="96" y="570" {G} font-size="21" fill="#3a332e">{tspans(a.get("summary",""),96,62,31,3)}</text>'
                   f'<a href="{L(a)}"><text x="96" y="695" {G} font-size="19" fill="#2b2724" text-decoration="underline">Read more</text></a>')
         if b:
             s += (f'<text x="960" y="645" {G} font-size="15" fill="#8a8079" letter-spacing="2">{E(meta_line(b))}</text>'
+                  f'{hero_helper(b, 960, 645, 22, 2, "hhb", font_size=15)}'
                   f'<a href="{L(b)}"><text x="960" y="695" {G} font-style="italic" font-size="36" fill="#2b2724">{tspans(b["title"],960,22,42,2)}</text></a>')
     else:
         if a:
             s += (f'<text x="24" y="410" {G} font-size="13" fill="#8a8079" letter-spacing="2">{E(meta_line(a))}</text>'
+                  f'{hero_helper(a, 24, 410, 22, 2, "hhm", font_size=13)}'
                   f'<a href="{L(a)}"><text x="24" y="455" {G} font-style="italic" font-size="34" fill="#2b2724">{tspans(a["title"],24,19,40,2)}</text></a>'
                   f'<text x="24" y="550" {G} font-size="18" fill="#3a332e">{tspans(a.get("summary",""),24,36,28,3)}</text>'
                   f'<a href="{L(a)}"><text x="24" y="660" {G} font-size="17" fill="#2b2724" text-decoration="underline">Read more</text></a>')
         if b:
             s += f'<a href="{L(b)}"><text x="24" y="742" {G} font-style="italic" font-size="24" fill="#2b2724">{tspans(b["title"],24,30,0,1)}</text></a>'
+            # secondary mobile card has no meta line; sit the helper after the title
+            s += hero_helper(b, 24, 742, 22, 0, "hhmb", text=textwrap.wrap(b["title"], 30)[0], font_size=24)
     return s
 
 # ---------- pages ----------
@@ -143,6 +168,7 @@ def page(title, main, root, a=None, b=None, compact=False, yy=None):
                for f in os.listdir(os.path.join(ROOT, "posts")) if f.endswith(".md")):  # no notes: drop the Notes nav links
         base = base.replace('<a href="{{ROOT}}notes.html">Notes</a>', "")
         hd = re.sub(r'<text[^>]*><a href="\{\{ROOT\}\}notes\.html">Notes</a></text>', "", hd)
+        hm = hm.replace('Posts   Notes   Projects   About', 'Posts   Projects   About')
     # Unique ID prefixes so inlined mark defs do not collide (sticky nav + hero overlay).
     nav = mdmtmr_nav("mdn")
     hero_nav = mdmtmr_nav("mdh")
@@ -214,15 +240,15 @@ def build(out, drafts):
     a, b = (posts + [None, None])[:2]
     W("index.html", page("Freigeist", listing("ALL POSTS // ARCHIVE", posts, ""), "", a, b))
     notes = [p for p in posts if p.get("type") == "note"]
-    if notes: W("notes.html", page("Notes – Freigeist", listing("NOTES // SHORT FORM", notes, ""), "", *(notes + [None, None])[:2]))
+    if notes: W("notes.html", page("Notes – Freigeist", listing("NOTES // SHORT FORM", notes, ""), "", *(notes + [None, None])[:2], compact=True))
     projects = {}
     for p in posts: projects.setdefault(p.get("project") or "misc", []).append(p)
     pm = "".join(f'<div class="kick"><span>{MK}PROJECT // {E(k).upper()}</span><span>{len(v):02d}</span></div><div class="grid" style="margin-bottom:80px">{"".join(teaser(p, "") for p in v)}</div>' for k, v in sorted(projects.items()))
-    W("projects.html", page("Projects – Freigeist", f'<main class="posts">{pm}{FOOT}</main>', "", a, b))
+    W("projects.html", page("Projects – Freigeist", f'<main class="posts">{pm}{FOOT}</main>', "", a, b, compact=True))
     about = os.path.join(ROOT, "pages", "about.md")
     if os.path.exists(about):
         ab = parse(about)
-        W("about.html", page("About – Freigeist", f'<main class="posts post"><div class="prose"><h1>{E(ab["title"])}</h1>{markdown(ab["body"])}</div>{FOOT}</main>', "", a, b))
+        W("about.html", page("About – Freigeist", f'<main class="posts post"><div class="prose"><h1>{E(ab["title"])}</h1>{markdown(ab["body"])}</div>{FOOT}</main>', "", a, b, compact=True))
     for i, p in enumerate(posts):
         nxt = posts[i + 1] if i + 1 < len(posts) else None
         dr = '<span class="draft">DRAFT</span>' if p.get("draft") else ""
