@@ -56,3 +56,4 @@ article .ai-helper::before{left:auto;right:6px}
 /* hero overlay sits at the right edge of the desktop nav */
 #mdmtmr-hero .mdmtmr-nav::after{left:auto;right:-6px;transform:none}
 #mdmtmr-hero .mdmtmr-nav::before{left:auto;right:10px;transform:none}
+body.compact #mdmtmr-hero{display:none!important}

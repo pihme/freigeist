@@ -214,15 +214,15 @@ def build(out, drafts):
     a, b = (posts + [None, None])[:2]
     W("index.html", page("Freigeist", listing("ALL POSTS // ARCHIVE", posts, ""), "", a, b))
     notes = [p for p in posts if p.get("type") == "note"]
-    if notes: W("notes.html", page("Notes – Freigeist", listing("NOTES // SHORT FORM", notes, ""), "", *(notes + [None, None])[:2]))
+    if notes: W("notes.html", page("Notes – Freigeist", listing("NOTES // SHORT FORM", notes, ""), "", *(notes + [None, None])[:2], compact=True))
     projects = {}
     for p in posts: projects.setdefault(p.get("project") or "misc", []).append(p)
     pm = "".join(f'<div class="kick"><span>{MK}PROJECT // {E(k).upper()}</span><span>{len(v):02d}</span></div><div class="grid" style="margin-bottom:80px">{"".join(teaser(p, "") for p in v)}</div>' for k, v in sorted(projects.items()))
-    W("projects.html", page("Projects – Freigeist", f'<main class="posts">{pm}{FOOT}</main>', "", a, b))
+    W("projects.html", page("Projects – Freigeist", f'<main class="posts">{pm}{FOOT}</main>', "", a, b, compact=True))
     about = os.path.join(ROOT, "pages", "about.md")
     if os.path.exists(about):
         ab = parse(about)
-        W("about.html", page("About – Freigeist", f'<main class="posts post"><div class="prose"><h1>{E(ab["title"])}</h1>{markdown(ab["body"])}</div>{FOOT}</main>', "", a, b))
+        W("about.html", page("About – Freigeist", f'<main class="posts post"><div class="prose"><h1>{E(ab["title"])}</h1>{markdown(ab["body"])}</div>{FOOT}</main>', "", a, b, compact=True))
     for i, p in enumerate(posts):
         nxt = posts[i + 1] if i + 1 < len(posts) else None
         dr = '<span class="draft">DRAFT</span>' if p.get("draft") else ""
