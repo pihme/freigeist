@@ -30,4 +30,29 @@ main.post .tags .ai-helper{margin:0 8px 0 -4px;vertical-align:-14px}
 article .ai-helper::after{left:auto;right:-6px}
 article .ai-helper::before{left:auto;right:6px}
 
-/* related site mark next to a prose link (e.g. About → MDMTMR) */
+/* MDMTMR mark at end of site navigation (desktop hero + sticky/mobile nav) */
+.hn-sep{display:inline-block;width:1px;height:1em;background:#2b2724;margin:0 14px;flex-shrink:0;align-self:center}
+.mdmtmr-nav{position:relative;display:inline-flex;align-items:center;justify-content:center;color:#2b2724;--paper:#f8f3ea;text-decoration:none;outline-offset:3px;flex-shrink:0}
+.mdmtmr-nav svg{display:block;width:24px;height:24px}
+.mdmtmr-nav::after{content:attr(data-tip);position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 10px);white-space:nowrap;font:600 12px "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:none;background:#111;color:var(--acc-text);padding:6px 10px;border-left:3px solid var(--accent);opacity:0;pointer-events:none;transition:opacity .12s;z-index:10}
+.mdmtmr-nav::before{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 4px);border:6px solid transparent;border-bottom:0;border-top-color:#111;opacity:0;transition:opacity .12s;z-index:10}
+.mdmtmr-nav:hover::after,.mdmtmr-nav:focus-visible::after,.mdmtmr-nav:hover::before,.mdmtmr-nav:focus-visible::before{opacity:1}
+#hbar .hn a.mdmtmr-nav{padding:0;background:transparent;border:0;letter-spacing:0;text-transform:none}
+#hbar .hn a.mdmtmr-nav:hover{background:transparent;color:#2b2724}
+#hbar .hn .hn-sep{height:12px;margin:0 10px}
+#mdmtmr-hero{position:absolute;z-index:2;display:flex;align-items:center;pointer-events:none}
+#mdmtmr-hero .hn-sep,#mdmtmr-hero .mdmtmr-nav{pointer-events:auto}
+@media(max-width:700px){
+  .mdmtmr-nav svg{width:20px;height:20px}
+  .mdmtmr-nav::after{white-space:normal;width:max-content;max-width:62vw;left:auto;right:-6px;transform:none}
+  .mdmtmr-nav::before{left:auto;right:6px;transform:none}
+  #mdmtmr-hero{display:none}
+  #hbar .hn .hn-sep{width:100%;height:1px;margin:6px 0;align-self:stretch}
+  #hbar .hn a.mdmtmr-nav{align-self:stretch;justify-content:center;padding:6px 10px;background:rgba(248,243,234,.9);border:1px solid #2b2724}
+  #hbar .hn a.mdmtmr-nav:hover{background:#111;color:var(--acc-text)}
+}
+@media(prefers-reduced-motion:reduce){.mdmtmr-nav::after,.mdmtmr-nav::before{transition:none}}
+
+/* hero overlay sits at the right edge of the desktop nav */
+#mdmtmr-hero .mdmtmr-nav::after{left:auto;right:-6px;transform:none}
+#mdmtmr-hero .mdmtmr-nav::before{left:auto;right:10px;transform:none}

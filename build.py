@@ -143,12 +143,36 @@ def page(title, main, root, a=None, b=None, compact=False, yy=None):
                for f in os.listdir(os.path.join(ROOT, "posts")) if f.endswith(".md")):  # no notes: drop the Notes nav links
         base = base.replace('<a href="{{ROOT}}notes.html">Notes</a>', "")
         hd = re.sub(r'<text[^>]*><a href="\{\{ROOT\}\}notes\.html">Notes</a></text>', "", hd)
+    # Unique ID prefixes so inlined mark defs do not collide (sticky nav + hero overlay).
+    nav = mdmtmr_nav("mdn")
+    hero_nav = mdmtmr_nav("mdh")
     return (base.replace("{{HERO_D}}", hd).replace("{{HERO_M}}", hm).replace("{{MAIN}}", main)
                 .replace("{{YY}}", yy).replace("{{TITLE}}", E(title)).replace("{{ROOT}}", root)
+                .replace("{{MDMTMR_NAV}}", nav, 1).replace("{{MDMTMR_NAV}}", hero_nav, 1)
                 .replace("<body>", '<body class="compact">' if compact else "<body>", 1))
 
 HELPER = open(os.path.join(ROOT, "assets", "helferlein.svg"), encoding="utf-8").read()
 HELPER = re.sub(r"<title>.*?</title>", "", HELPER).replace(' role="img" aria-label="Helferlein"', ' aria-hidden="true" focusable="false"')
+
+MDMTMR_MARK = open(os.path.join(ROOT, "assets", "mdmtmr-mark.svg"), encoding="utf-8").read()
+MDMTMR_TIP = "My Data, My Tools, My Rules"
+MDMTMR_HREF = "https://pihme.github.io/my-data-my-tools-my-rules/"
+
+def mdmtmr_svg(prefix, size):
+    """Inline the MDMTMR mark so currentColor / --accent / --paper apply; unique IDs per instance."""
+    svg = MDMTMR_MARK
+    for old in ("h0", "h1", "h2", "h3", "ring"):
+        svg = svg.replace(f'id="{old}"', f'id="{prefix}-{old}"').replace(f'url(#{old})', f'url(#{prefix}-{old})')
+    svg = re.sub(r"<title>.*?</title>", "", svg)
+    svg = svg.replace(' role="img" aria-label="My Data, My Tools, My Rules"', ' aria-hidden="true" focusable="false"', 1)
+    svg = svg.replace("<svg ", f'<svg width="{size}" height="{size}" ', 1)
+    return svg
+
+def mdmtmr_nav(prefix="mdn"):
+    tip = E(MDMTMR_TIP)
+    svg = mdmtmr_svg(prefix, 24)
+    return (f'<span class="hn-sep" aria-hidden="true"></span>'
+            f'<a class="mdmtmr-nav" href="{MDMTMR_HREF}" aria-label="{tip}" title="{tip}" data-tip="{tip}">{svg}</a>')
 
 def helper(p, size):
     if not p.get("ai_generated"): return ""

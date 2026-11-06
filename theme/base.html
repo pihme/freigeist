@@ -37,7 +37,7 @@ svg.mk{width:28px;height:28px;display:inline-block;vertical-align:middle}main.po
 #hbar .hm{display:block;position:absolute;right:12px;top:24px;width:34px;height:30px;background:#111;border:0;padding:7px 8px;pointer-events:auto}#hbar .hm i{display:block;height:2px;background:var(--acc-text);margin:0 0 5px}#hbar .hm i:nth-child(2){width:70%}}
 </style><a id="hhome" href="{{ROOT}}index.html" aria-label="Freigeist – home"></a><style>#hhome{position:fixed;z-index:6;pointer-events:none}body.compact>svg.d,body.compact>svg.m{position:absolute;top:0;left:0;visibility:hidden;pointer-events:none}body.compact main.posts{position:relative;z-index:1;margin-top:0;padding-top:130px}@media(max-width:700px){body.compact main.posts{padding-top:110px}}</style><div id="hbar"><i class="hw"></i><i class="hd"></i><i class="ht"></i>
 <span class="hro">FG-{{YY}} · 22.91S 43.17W · <b id="hpct">000</b>%</span>
-<nav class="hn"><a href="{{ROOT}}index.html">Posts</a><a href="{{ROOT}}notes.html">Notes</a><a href="{{ROOT}}projects.html">Projects</a><a href="{{ROOT}}about.html">About</a></nav>
+<nav class="hn"><a href="{{ROOT}}index.html">Posts</a><a href="{{ROOT}}notes.html">Notes</a><a href="{{ROOT}}projects.html">Projects</a><a href="{{ROOT}}about.html">About</a>{{MDMTMR_NAV}}</nav>
 <button class="hm" aria-label="Menu" onclick="this.parentNode.classList.toggle('open')"><i></i><i></i><i></i></button></div><svg id="hmark" class="mk " viewBox="0 0 88 88"><use href="#fg-mark"/></svg><script>
 (function(){const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;let st=null,tick=false;
 const bar=document.getElementById('hbar');
@@ -78,4 +78,30 @@ function burst(){const q=c=>[...document.querySelectorAll('.'+c)].filter(e=>e.ge
  const k=Math.random()<.3?3:Math.random()<.6?2:1;for(let i=0;i<k;i++)setTimeout(P(fx),R(0,250));
  setTimeout(burst,R(1800,4800))}
 setTimeout(burst,1200)})();
+</script><div id="mdmtmr-hero" hidden>{{MDMTMR_NAV}}</div><script>
+(function(){
+ function place(){
+  const host=document.getElementById('mdmtmr-hero'); if(!host) return;
+  const sv=[...document.querySelectorAll('body>svg.d')].find(s=>s.getBoundingClientRect().width>0);
+  if(!sv || matchMedia('(max-width:700px)').matches){host.hidden=true;return;}
+  const about=[...sv.querySelectorAll('a')].find(a=>a.textContent.trim()==='About');
+  if(!about){host.hidden=true;return;}
+  const t=about.closest('text'); if(!t){host.hidden=true;return;}
+  let b; try{b=t.getBBox()}catch(e){host.hidden=true;return;}
+  const vb=sv.viewBox.baseVal, rect=sv.getBoundingClientRect();
+  const sx=rect.width/vb.width, sy=rect.height/vb.height;
+  const gap=14; // CSS px gap text→divider and divider→icon
+  // document position of SVG top-left
+  const top=rect.top+scrollY, left=rect.left+scrollX;
+  const aboutRight=left+(b.x+b.width)*sx;
+  const midY=top+(b.y+b.height/2)*sy;
+  host.hidden=false;
+  host.style.left=(aboutRight)+'px';
+  host.style.top=midY+'px';
+  host.style.transform='translateY(-50%)';
+ }
+ addEventListener('resize',()=>requestAnimationFrame(place));
+ addEventListener('scroll',()=>requestAnimationFrame(place),{passive:true});
+ (document.fonts?document.fonts.ready:Promise.resolve()).then(()=>requestAnimationFrame(place));
+})();
 </script></body></html>
