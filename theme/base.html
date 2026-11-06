@@ -82,7 +82,10 @@ setTimeout(burst,1200)})();
 (function(){
  function place(){
   const host=document.getElementById('mdmtmr-hero'); if(!host) return;
+<<<<<<< HEAD
   if(document.body.classList.contains('compact')){host.hidden=true;return;}
+=======
+>>>>>>> origin/main
   const sv=[...document.querySelectorAll('body>svg.d')].find(s=>s.getBoundingClientRect().width>0);
   if(!sv || matchMedia('(max-width:700px)').matches){host.hidden=true;return;}
   const about=[...sv.querySelectorAll('a')].find(a=>a.textContent.trim()==='About');
