@@ -31,4 +31,3 @@ article .ai-helper::after{left:auto;right:-6px}
 article .ai-helper::before{left:auto;right:6px}
 
 /* related site mark next to a prose link (e.g. About → MDMTMR) */
-main.post .prose a img[src$="mdmtmr-mark.svg"]{height:32px;width:32px;display:inline-block;vertical-align:-8px;margin-right:10px}
