@@ -56,7 +56,8 @@ article .ai-helper::before{left:auto;right:6px}
 /* hero overlay sits at the right edge of the desktop nav */
 #mdmtmr-hero .mdmtmr-nav::after{left:auto;right:-6px;transform:none}
 #mdmtmr-hero .mdmtmr-nav::before{left:auto;right:10px;transform:none}
-<<<<<<< HEAD
 body.compact #mdmtmr-hero{display:none!important}
-=======
->>>>>>> origin/main
+
+/* Helferlein inside home-hero SVG teasers (foreignObject) */
+.hero-ai{margin:0;padding:0;line-height:0;color:#2b2724;--paper:#f8f3ea}
+.hero-ai .ai-helper{margin-left:0;vertical-align:middle}
