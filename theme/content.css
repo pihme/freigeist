@@ -29,3 +29,6 @@ main.post .tags .ai-helper{margin:0 8px 0 -4px;vertical-align:-14px}
 /* index cards: helper sits at the right end of the meta line, so open the tooltip leftwards */
 article .ai-helper::after{left:auto;right:-6px}
 article .ai-helper::before{left:auto;right:6px}
+
+/* related site mark next to a prose link (e.g. About → MDMTMR) */
+main.post .prose a img[src$="mdmtmr-mark.svg"]{height:32px;width:32px;display:inline-block;vertical-align:-8px;margin-right:10px}
