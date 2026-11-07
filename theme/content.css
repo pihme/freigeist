@@ -60,4 +60,8 @@ body.compact #mdmtmr-hero{display:none!important}
 
 /* Helferlein inside home-hero SVG teasers (foreignObject) */
 .hero-ai{margin:0;padding:0;line-height:0;color:#2b2724;--paper:#f8f3ea}
-.hero-ai .ai-helper{margin-left:0;vertical-align:middle}
+/* Paper backing (same .92 paper as the teasers) keeps the icon readable over waves and HUD texture */
+.hero-ai .ai-helper{margin:0;vertical-align:top;padding:3px;background:rgba(248,243,234,.92)}
+/* desktop secondary card: icon sits above the meta line, so the tip opens downward (clear of the HUD box above) */
+.hero-ai.tip-down .ai-helper::after{bottom:auto;top:calc(100% + 10px)}
+.hero-ai.tip-down .ai-helper::before{bottom:auto;top:calc(100% + 4px);border-top:0;border-bottom:6px solid #111}
