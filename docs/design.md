@@ -81,7 +81,9 @@ Continuous **wavy engraving lines** run down the whole page. They are a pre-rend
 
 Posts with `ai_generated: true` show the **Helferlein** (`assets/helferlein.svg`), the mascot of github.com/pihme/helferlein, redrawn from its line-drawing logo in Freigeist style: ink in `currentColor`, accent-coloured eyes and smile, hatched shading on the right side instead of a solid shadow, and strokes thick enough to read at 22–40 px, and the flame and eye pixels in `--accent`. Its colours are `currentColor`, `--accent` and `--paper`, so it also works on dark backgrounds.
 
-- On post pages it is 40 px, at the start of the tag line under the title, with an "AI-GENERATED" label. On index cards and on the home-page hero teasers it is 22 px, after the meta line (hero secondary mobile card: after the title).
+- On post pages it is 40 px, at the start of the tag line under the title, with an "AI-GENERATED" label. On index cards it is 22 px, after the meta line.
+- **Home-page hero teasers:** the hero plates scale with the viewport, so the size is set in plate units. Desktop: 34 units in the 1440-wide plate (about 30 px at 1280 px, 34 px at 1440 px; it stays at 22 px or more down to roughly 930 px). Mobile: 22 px (the mobile plate renders 1:1). The icon sits on a small paper backing (`rgba(248,243,234,.92)`, the same paper as the teasers) so it stays readable over the waves.
+- Hero placement: after the meta line (desktop and mobile primary card). Desktop secondary card: on its own row above the meta line, left-aligned with it, because the end of that meta line runs into the hatched strip on the right; its tooltip opens downward. Mobile secondary card: after the title (it has no meta line).
 - It shows the tooltip "This post was created by AI." on hover and keyboard focus. The tooltip is pure CSS (`data-tip`), with `title` as a fallback, and the element has `role="img"` and an `aria-label` with the same text.
 - Don't use it below 22 px.
 

@@ -94,8 +94,13 @@ def approx_meta_w(text, size, tracking):
     """Rough advance width for hero meta lines (Cormorant + letter-spacing)."""
     return len(text) * (size * 0.53 + tracking)
 
-def hero_helper(p, x, y, size, tracking, prefix, text=None, font_size=None):
-    """Helferlein after a hero teaser meta/title line; foreignObject so the CSS tooltip works."""
+HERO_HELPER_D = 34  # desktop plate is 1440 units wide: ~30 px at 1280, still 22 px at ~930 px viewport
+HERO_HELPER_PAD = 3  # paper backing around the icon (see .hero-ai in content.css)
+
+def hero_helper(p, x, y, size, tracking, prefix, text=None, font_size=None, above=False):
+    """Helferlein next to a hero teaser meta/title line; foreignObject so the CSS tooltip works.
+    Default: after the line, centred on its x-height. above=True: left-aligned on its own row
+    above the line (desktop secondary card, whose meta line ends next to the hatched strip)."""
     if not p or not p.get("ai_generated"): return ""
     tip = "This post was created by AI."
     w = round(size * 116 / 142)
@@ -103,12 +108,17 @@ def hero_helper(p, x, y, size, tracking, prefix, text=None, font_size=None):
     svg = svg.replace("<svg ", f'<svg height="{size}" width="{w}" ', 1)
     label = text if text is not None else meta_line(p)
     fs = font_size if font_size is not None else size
-    hx = x + approx_meta_w(label, fs, tracking) + 12
-    hy = y - size + 4
+    pad = HERO_HELPER_PAD
+    if above:
+        hx = x - pad
+        hy = y - fs - 8 - size - pad
+    else:
+        hx = x + approx_meta_w(label, fs, tracking) + 10 - pad
+        hy = y - round(fs * 0.33) - size / 2 - pad
     inner = (f'<span class="ai-helper" tabindex="0" role="img" aria-label="{E(tip)}" title="{E(tip)}" '
              f'data-tip="{E(tip)}">{svg}</span>')
-    return (f'<foreignObject x="{hx:.1f}" y="{hy}" width="{w + 6}" height="{size + 6}" overflow="visible">'
-            f'<div xmlns="http://www.w3.org/1999/xhtml" class="hero-ai">{inner}</div></foreignObject>')
+    return (f'<foreignObject x="{hx:.1f}" y="{hy:.1f}" width="{w + 2 * pad}" height="{size + 2 * pad}" overflow="visible">'
+            f'<div xmlns="http://www.w3.org/1999/xhtml" class="hero-ai{" tip-down" if above else ""}">{inner}</div></foreignObject>')
 
 def cards(a, b, root, mobile):
     G, L = 'font-family="Cormorant Garamond"', lambda p: f'{root}posts/{p["slug"]}.html'
@@ -116,13 +126,13 @@ def cards(a, b, root, mobile):
     if not mobile:
         if a:
             s += (f'<text x="96" y="455" {G} font-size="15" fill="#8a8079" letter-spacing="2">{E(meta_line(a))}</text>'
-                  f'{hero_helper(a, 96, 455, 22, 2, "hha", font_size=15)}'
+                  f'{hero_helper(a, 96, 455, HERO_HELPER_D, 2, "hha", font_size=15)}'
                   f'<a href="{L(a)}"><text x="96" y="510" {G} font-style="italic" font-size="46" fill="#2b2724">{tspans(a["title"],96,34,0,1)}</text></a>'
                   f'<text x="96" y="570" {G} font-size="21" fill="#3a332e">{tspans(a.get("summary",""),96,62,31,3)}</text>'
                   f'<a href="{L(a)}"><text x="96" y="695" {G} font-size="19" fill="#2b2724" text-decoration="underline">Read more</text></a>')
         if b:
             s += (f'<text x="960" y="645" {G} font-size="15" fill="#8a8079" letter-spacing="2">{E(meta_line(b))}</text>'
-                  f'{hero_helper(b, 960, 645, 22, 2, "hhb", font_size=15)}'
+                  f'{hero_helper(b, 960, 645, HERO_HELPER_D, 2, "hhb", font_size=15, above=True)}'
                   f'<a href="{L(b)}"><text x="960" y="695" {G} font-style="italic" font-size="36" fill="#2b2724">{tspans(b["title"],960,22,42,2)}</text></a>')
     else:
         if a:
