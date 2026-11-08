@@ -195,6 +195,7 @@ HELPER = re.sub(r"<title>.*?</title>", "", HELPER).replace(' role="img" aria-lab
 
 MDMTMR_MARK = open(os.path.join(ROOT, "assets", "mdmtmr-mark.svg"), encoding="utf-8").read()
 MDMTMR_TIP = "My Data, My Tools, My Rules"
+SITE = "https://pihme.github.io/freigeist/"  # public base URL (sitemap.xml)
 MDMTMR_HREF = "https://pihme.github.io/my-data-my-tools-my-rules/"
 
 def mdmtmr_svg(prefix, size):
@@ -249,7 +250,10 @@ def build(out, drafts):
              ("IBM Plex Mono", "IBMPlexMono-Bold.ttf", "normal", "700"), ("Unbounded", "Unbounded-VariableFont_wght.ttf", "normal", "200 900")]
     open(os.path.join(out, "theme", "fonts.css"), "w").write("".join(
         f"@font-face{{font-family:'{a}';src:url(fonts/{f}) format('truetype');font-style:{s};font-weight:{w};font-display:swap}}\n" for a, f, s, w in fonts))
-    W = lambda path, s: open(os.path.join(out, path), "w", encoding="utf-8").write(s)
+    pages = []  # (path, lastmod) for sitemap.xml
+    def W(path, s, lastmod=None):
+        if path.endswith(".html"): pages.append((path, lastmod or datetime.date.today().isoformat()))
+        open(os.path.join(out, path), "w", encoding="utf-8").write(s)
     a, b = (posts + [None, None])[:2]
     W("index.html", page("Freigeist", listing("ALL POSTS // ARCHIVE", posts, ""), "", a, b).replace('<meta charset="utf-8">', '<meta charset="utf-8">' + GSC_META, 1))
     notes = [p for p in posts if p.get("type") == "note"]
@@ -269,7 +273,10 @@ def build(out, drafts):
         proj = f'PROJECT: {E(p["project"]).upper()} · ' if p.get("project") else ""
         main = (f'<main class="posts post"><div class="kick"><a class="back" href="../index.html">← All posts</a><span>{E(meta_line(p))}{dr}</span></div>'
                 f'<div class="prose"><h1>{E(p["title"])}</h1><div class="tags">{helper(p, 40)}{'<span class="ai-label">AI-GENERATED · </span>' if p.get("ai_generated") else ""}{proj}{E(tags)}</div>{markdown(p["body"])}</div>{FOOT}</main>')
-        W(f'posts/{p["slug"]}.html', page(f'{p["title"]} – Freigeist', main, "../", p, nxt, compact=True, yy=str(p.get("date", ""))[2:4] or None))
+        W(f'posts/{p["slug"]}.html', page(f'{p["title"]} – Freigeist', main, "../", p, nxt, compact=True, yy=str(p.get("date", ""))[2:4] or None),
+          str(p.get("date", ""))[:10] or None)
+    urls = "".join(f"  <url><loc>{SITE}{'' if pth == 'index.html' else pth}</loc><lastmod>{lm}</lastmod></url>\n" for pth, lm in pages)
+    W("sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
     print(f"built {len(posts)} posts into {out}")
 
 if __name__ == "__main__":
