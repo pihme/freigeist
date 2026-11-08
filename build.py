@@ -161,6 +161,9 @@ def header_only(svg):
             r.remove(c)
     return ET.tostring(r, encoding="unicode")
 
+# Google Search Console ownership check (home page only).
+GSC_META = '<meta name="google-site-verification" content="kjHdjMt_2TgNqzExmmSZ4jDHpWZFUX_3mW5EGm2OaaE" />'
+
 def page(title, main, root, a=None, b=None, compact=False, yy=None):
     yy = yy or datetime.date.today().strftime("%y")
     base = open(os.path.join(TH, "base.html"), encoding="utf-8").read()
@@ -248,7 +251,7 @@ def build(out, drafts):
         f"@font-face{{font-family:'{a}';src:url(fonts/{f}) format('truetype');font-style:{s};font-weight:{w};font-display:swap}}\n" for a, f, s, w in fonts))
     W = lambda path, s: open(os.path.join(out, path), "w", encoding="utf-8").write(s)
     a, b = (posts + [None, None])[:2]
-    W("index.html", page("Freigeist", listing("ALL POSTS // ARCHIVE", posts, ""), "", a, b))
+    W("index.html", page("Freigeist", listing("ALL POSTS // ARCHIVE", posts, ""), "", a, b).replace('<meta charset="utf-8">', '<meta charset="utf-8">' + GSC_META, 1))
     notes = [p for p in posts if p.get("type") == "note"]
     if notes: W("notes.html", page("Notes – Freigeist", listing("NOTES // SHORT FORM", notes, ""), "", *(notes + [None, None])[:2], compact=True))
     projects = {}
