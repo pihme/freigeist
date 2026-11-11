@@ -4,7 +4,7 @@ date: 2026-11-11
 type: announcement
 project: hermetarium
 tags: [release, hermetarium]
-summary: "Hermetarium 1.0 was released: a home for a coding assistant behind a wall. From 1.0.1, MicroVM works as well."
+summary: "Hermetarium 1.0 was released: a home for a coding assistant behind a wall. From 1.0.1, MicroVM works for Grok as well."
 ai_generated: true
 ---
 
@@ -24,7 +24,7 @@ The official inhabitants are [Claude Code](https://github.com/pihme/hermetarium/
 # What is in 1.0?
 1.0 shipped with the Docker wall. The [1.0.0 release notes](https://github.com/pihme/hermetarium/releases/tag/hermetarium/v1.0.0) said MicroVM (Firecracker) was not supported yet.
 
-[1.0.1](https://github.com/pihme/hermetarium/releases/tag/hermetarium/v1.0.1) followed the next day. It seeds the Firecracker guest's entropy pool, and from that release MicroVM works as well.
+[1.0.1](https://github.com/pihme/hermetarium/releases/tag/hermetarium/v1.0.1) followed the next day. It seeds the Firecracker guest's entropy pool, and from that release MicroVM works for Grok.
 
 # How do I get it?
 The release has a static Linux binary, `hermetarium-linux-amd64`. You can also build from source with Go 1.24 or newer. You need Docker. The strong wall also needs a Linux machine with `/dev/kvm`, on x86_64. Firecracker is downloaded into the cache on the first strong `create`.
