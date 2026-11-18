@@ -11,7 +11,7 @@ posts/        one Markdown file per post
 pages/        static pages (about.md)
 theme/        HTML shell, hero SVGs, CSS, fonts, background tiles
 assets/       logo mark, reference images, post images (assets/posts/<slug>/)
-build.py      static site builder (Python 3.8+, no dependencies)
+build.py      static site builder (no dependencies)
 site/         build output (git-ignored)
 ```
 
